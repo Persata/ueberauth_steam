@@ -62,7 +62,7 @@ defmodule Ueberauth.Strategy.SteamTest do
     test "error for missing user valid information" do
       :meck.new HTTPoison, [:passthrough]
       :meck.expect HTTPoison, :get, fn
-        "https://steamcommunity.com/openid/login?openid.claimed_id=http%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
+        "https://steamcommunity.com/openid/login?openid.claimed_id=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
           {:ok, %HTTPoison.Response{body: "", status_code: 200}}
         "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=API_KEY&steamids=12345" ->
           {:ok, %HTTPoison.Response{body: Poison.encode!(@sample_response), status_code: 200}}
@@ -71,7 +71,7 @@ defmodule Ueberauth.Strategy.SteamTest do
       conn =
         callback(%{
           "openid.mode" => "id_res",
-          "openid.claimed_id" => "http://steamcommunity.com/openid/id/12345"
+          "openid.claimed_id" => "https://steamcommunity.com/openid/id/12345"
         })
 
       assert conn.assigns == %{
@@ -84,7 +84,7 @@ defmodule Ueberauth.Strategy.SteamTest do
     test "error for invalid user callback" do
       :meck.new HTTPoison, [:passthrough]
       :meck.expect HTTPoison, :get, fn
-        "https://steamcommunity.com/openid/login?openid.claimed_id=http%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
+        "https://steamcommunity.com/openid/login?openid.claimed_id=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
           {:ok, %HTTPoison.Response{body: "is_valid:false\n", status_code: 200}}
         "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=API_KEY&steamids=12345" ->
           {:ok, %HTTPoison.Response{body: Poison.encode!(@sample_response), status_code: 200}}
@@ -93,7 +93,7 @@ defmodule Ueberauth.Strategy.SteamTest do
       conn =
         callback(%{
           "openid.mode" => "id_res",
-          "openid.claimed_id" => "http://steamcommunity.com/openid/id/12345"
+          "openid.claimed_id" => "https://steamcommunity.com/openid/id/12345"
         })
 
       assert conn.assigns == %{
@@ -106,7 +106,7 @@ defmodule Ueberauth.Strategy.SteamTest do
     test "error for invalid user data" do
       :meck.new HTTPoison, [:passthrough]
       :meck.expect HTTPoison, :get, fn
-        "https://steamcommunity.com/openid/login?openid.claimed_id=http%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
+        "https://steamcommunity.com/openid/login?openid.claimed_id=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
           {:ok, %HTTPoison.Response{body: "is_valid:true\n", status_code: 200}}
         "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=API_KEY&steamids=12345" ->
           {:ok, %HTTPoison.Response{body: "{{{{{{{", status_code: 200}}
@@ -115,7 +115,7 @@ defmodule Ueberauth.Strategy.SteamTest do
       conn =
         callback(%{
           "openid.mode" => "id_res",
-          "openid.claimed_id" => "http://steamcommunity.com/openid/id/12345"
+          "openid.claimed_id" => "https://steamcommunity.com/openid/id/12345"
         })
 
       assert conn.assigns == %{
@@ -128,7 +128,7 @@ defmodule Ueberauth.Strategy.SteamTest do
     test "success for valid user and valid user data" do
       :meck.new HTTPoison, [:passthrough]
       :meck.expect HTTPoison, :get, fn
-        "https://steamcommunity.com/openid/login?openid.claimed_id=http%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
+        "https://steamcommunity.com/openid/login?openid.claimed_id=https%3A%2F%2Fsteamcommunity.com%2Fopenid%2Fid%2F12345&openid.mode=check_authentication" ->
           {:ok, %HTTPoison.Response{body: "is_valid:true\n", status_code: 200}}
         "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=API_KEY&steamids=12345" ->
           {:ok, %HTTPoison.Response{body: Poison.encode!(@sample_response), status_code: 200}}
@@ -137,7 +137,7 @@ defmodule Ueberauth.Strategy.SteamTest do
       conn =
         callback(%{
           "openid.mode" => "id_res",
-          "openid.claimed_id" => "http://steamcommunity.com/openid/id/12345"
+          "openid.claimed_id" => "https://steamcommunity.com/openid/id/12345"
         })
 
       assert conn.assigns == %{}
