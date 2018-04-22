@@ -86,8 +86,9 @@ defmodule Ueberauth.Strategy.Steam do
 
     %Info{
       image: user.avatar,
-      name: user.realname,
-      location: user.loccountrycode,
+      name: Map.get_lazy(user, :realname, fn -> Map.get(user, :personaname) end),
+      nickname: user.personaname,
+      location: Map.get(user, :loccountrycode),
       urls: %{
         Steam: user.profileurl,
       }

@@ -15,6 +15,7 @@ defmodule Ueberauth.Strategy.SteamTest do
        realname: "Sample Sample", steamid: "765309403423",
        timecreated: 452342342}
   @sample_response %{response: %{players: [@sample_user]}}
+  @nilable_fields [:loccountrycode, :realname]
 
   describe "handle_request!" do
     test "redirects" do
@@ -161,12 +162,42 @@ defmodule Ueberauth.Strategy.SteamTest do
     test "info", %{conn: conn} do
       assert Steam.info(conn) == %Ueberauth.Auth.Info{
              image: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/f3/f3dsf34324eawdasdas3rwe.jpg",
-             location: "NL", name: "Sample Sample",
+             location: "NL", name: "Sample Sample", nickname: "Sample",
              urls: %{Steam: "http://steamcommunity.com/id/sample/"}}
     end
 
     test "extra", %{conn: conn} do
       assert Steam.extra(conn) == %Ueberauth.Auth.Extra{raw_info: %{user: @sample_user}}
+    end
+
+    test "credentials", %{conn: conn} do
+      assert Steam.credentials(conn) == %Ueberauth.Auth.Credentials{}
+    end
+  end
+
+  describe "info retrievers fetch with nilable fields" do
+    setup do
+      conn = %{
+        conn(:get, "http://example.com/path/callback") |
+        private: %{
+          steam_user: Map.drop(@sample_user, @nilable_fields)
+        }
+      }
+      conn = Steam.handle_callback! conn
+
+      [conn: conn]
+    end
+
+    test "info", %{conn: conn} do
+      auth_info = %Ueberauth.Auth.Info{
+        image: "https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/f3/f3dsf34324eawdasdas3rwe.jpg",
+        name: "Sample",
+        nickname: "Sample",
+        urls: %{
+          Steam: "http://steamcommunity.com/id/sample/"
+        }
+      }
+      assert Steam.info(conn) == auth_info
     end
 
     test "credentials", %{conn: conn} do
